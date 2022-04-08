@@ -1,0 +1,2 @@
+class ShortedLinksTag < ApplicationRecord
+end

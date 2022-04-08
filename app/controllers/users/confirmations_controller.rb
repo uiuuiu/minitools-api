@@ -10,10 +10,7 @@ class Users::ConfirmationsController < Devise::ConfirmationsController
         message: 'Your account was actived sucessfully.'
       }
     else
-      render_blank_with_message meta: {
-        message: resource.errors.full_messages,
-        status: 422
-      }
+      render_errors(resource)
     end
   end
 end

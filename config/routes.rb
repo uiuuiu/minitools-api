@@ -9,11 +9,14 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      resources :users
+      resources :shorted_links
     end
 
     namespace :v2 do
       # resource :countries
     end
   end
+
+  # Shorted link
+  get '/r/:token' => "shorted_link_redirect#show"
 end
