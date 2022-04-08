@@ -1,7 +1,6 @@
 class ApplicationController < ActionController::API
   include HandleControllerError
 
-  attr_reader :current_user
   attr_accessor :message
   attr_writer :status
 
@@ -12,7 +11,7 @@ class ApplicationController < ActionController::API
     meta[:status]  ||= 200
     options[:root] ||= 'data'
 
-    render json: objects, **options, meta: meta_attributes(objects, meta)
+    render json: objects, **options, meta: meta_attributes(objects, extra_meta: meta)
   end
 
   def render_data(objects, options:, meta:)
@@ -31,6 +30,13 @@ class ApplicationController < ActionController::API
 
   def render_yaml_data(objects, status: 200)
     render json: objects, adapter: :json, root: 'data', meta: { status: status }
+  end
+
+  def render_errors(object)
+    render_blank_with_message meta: {
+      message: object.errors.full_messages,
+      status: 422
+    }
   end
 
   def meta_attributes(collection, extra_meta:)
