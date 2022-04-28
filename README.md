@@ -23,3 +23,16 @@ Things you may want to cover:
 
 * ...
 # minitools-api
+
+## Install elasticsearch for searching
+### 1. Macos
+    ```bash
+    brew install elastic/tap/elasticsearch-full
+    ```
+
+    then run:
+    
+    ```bash
+    elasticsearch # or
+    brew services start elasticsearch-full # daemon
+    ```

@@ -61,6 +61,10 @@ class ApplicationController < ActionController::API
     params[:page] || 1
   end
 
+  def search_param
+    params[:search] || '*'
+  end
+
   def init_message_and_status(object)
     # @message is set in yield block
     yield

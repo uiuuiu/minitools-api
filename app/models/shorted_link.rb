@@ -1,4 +1,6 @@
 class ShortedLink < Shortener::ShortenedUrl
+  searchkick word_middle: [:url, :title, :description]
+  enum status: [:deactive, :active]
   # generate a shortened link from a url
   # link to a user if one specified
   # throw an exception if anything goes wrong
@@ -7,7 +9,7 @@ class ShortedLink < Shortener::ShortenedUrl
   # validates_format_of :url, with: URI.regexp
   URL_REGEX = /(http|https):\/\/[a-zA-Z0-9\-\#\/\_]+[\.][a-zA-Z0-9\-\.\#\/\_]+/i
 
-  def self.generate!(destination_url, owner: nil, custom_key: nil, expires_at: nil, fresh: false, category: nil, title: nil, description: nil)
+  def self.generate!(destination_url, owner: nil, custom_key: nil, expires_at: nil, fresh: false, category: nil, title: nil, description: nil, status: :deactive)
     # if we get a shortened_url object with a different owner, generate
     # new one for the new owner. Otherwise return same object
     # errors.
@@ -29,27 +31,29 @@ class ShortedLink < Shortener::ShortenedUrl
           fresh:      fresh,
           category:   category,
           title: title,
-          description: description
+          description: description,
+          status: status
         )
       end
     else
-      scope = owner ? owner.shortened_urls : self
+      scope = owner ? owner.shorted_links : self
       creation_method = fresh ? 'create' : 'first_or_create'
 
       url_to_save = Shortener.auto_clean_url ? clean_url(destination_url) : destination_url
-
+      
       scope.where(url: url_to_save, category: category).send(
         creation_method,
         custom_key: custom_key,
         expires_at: expires_at,
         title: title,
-        description: description
+        description: description,
+        status: status
       )
     end
   end
 
   # return shortened url on success, nil on failure
-  def self.generate(destination_url, owner: nil, custom_key: nil, expires_at: nil, fresh: false, category: nil, title: nil, description: nil)
+  def self.generate(destination_url, owner: nil, custom_key: nil, expires_at: nil, fresh: false, category: nil, title: nil, description: nil, status: :deactive)
     begin
       generate!(
         destination_url,
@@ -59,6 +63,7 @@ class ShortedLink < Shortener::ShortenedUrl
         fresh: fresh,
         category: category,
         title: title,
+        status: status,
         description: description
       )
     rescue => e
