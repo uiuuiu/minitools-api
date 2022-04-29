@@ -6,9 +6,6 @@ class Users::SessionsController < Devise::SessionsController
   private
 
   def respond_with(resource, _opts = {})
-    # render_blank_with_message meta: {
-    #   message: 'Registered sucessfully! Please check email for verification.'
-    # }
     render_data resource, options: { serializer: AccessTokenSerializer }, meta: { message: 'Login sucessfully.' }
   end
 
