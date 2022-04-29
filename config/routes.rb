@@ -8,12 +8,15 @@ Rails.application.routes.draw do
   
   devise_scope :user do
     post "/sign_up" => "users/registrations#create"
+    post "/api/v1/social_auth/callback" => "api/v1/social_auth#authenticate_social_auth_user"
   end
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 
   namespace :api do
     namespace :v1 do
       resources :shorted_links
+      mount_devise_token_auth_for 'User', at: 'auth', skip: [:omniauth_callbacks] # add this and overide the omniauth callbacks
+      post 'social_auth/callback', to: 'social_auth#authenticate_social_auth_user' # this is the line where we add our routes
     end
 
     namespace :v2 do
